@@ -1,6 +1,7 @@
 package io.github.RealizmHF.PseudoCodeTree;
 
 import javax.swing.JTabbedPane;
+import javax.swing.JTree;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -72,7 +73,7 @@ public class Driver extends JPanel implements ListSelectionListener{
         tabs.setMnemonicAt(0, KeyEvent.VK_1);
         
         
-        JComponent panel2 = makeTab2("Panel #2");
+        JComponent panel2 = makeTabTree();
         tabs.addTab("Tree", panel2);
         tabs.setMnemonicAt(1, KeyEvent.VK_2);
 
@@ -98,9 +99,9 @@ public class Driver extends JPanel implements ListSelectionListener{
           
     }
     
-    protected JComponent makeTab2(String text) {
+    protected JComponent makeTabTree() {
         tabTree = new JPanel(false);
-        JTextArea filler = new JTextArea(text);
+        JTree filler = new JTree(new Object[0]);
         tabTree.setLayout(new GridLayout(1, 1));
         tabTree.add(filler);
         return tabTree;
