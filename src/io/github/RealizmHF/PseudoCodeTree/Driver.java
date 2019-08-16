@@ -6,6 +6,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -14,6 +15,8 @@ import javax.swing.event.ListSelectionListener;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -26,29 +29,56 @@ import java.util.Scanner;
  
 public class Driver extends JPanel implements ListSelectionListener{
 	
+	private JPanel main;
+	
 	private JTabbedPane tabs;
 	
 	private JPanel tabFile;
 	private JPanel tabTree;
+	
+	private JButton newFile;
+	
+	private JButton delFile;
+	
+	private JButton refreshFile;
 
     public Driver() throws IOException {
-        super(new GridLayout(1, 1));
-         
+        super(new GridBagLayout());
+        
+        main = new JPanel(new GridBagLayout());
+        
+        GridBagConstraints c = new GridBagConstraints();
+
         tabs = new JTabbedPane();
+        
+        newFile = new JButton("New File");
+        c.gridx = 0;
+        c.gridy = 0;
+        main.add(newFile, c);
+        
+        delFile = new JButton("Delete");
+        c.gridx = 0;
+        c.gridy = 1;
+        main.add(delFile, c);
+        
+        refreshFile = new JButton("Refresh");
+        c.gridx = 0;
+        c.gridy = 2;
+        main.add(refreshFile, c);
         
         JComponent panel1 = makeTabFile();
         panel1.setPreferredSize(new Dimension(500, 200));
         tabs.addTab("File", panel1);
         tabs.setMnemonicAt(0, KeyEvent.VK_1);
-         
         
         
         JComponent panel2 = makeTab2("Panel #2");
         tabs.addTab("Tree", panel2);
         tabs.setMnemonicAt(1, KeyEvent.VK_2);
-         
-        
+
+        add(main);
         add(tabs);
+        
          
         tabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
@@ -82,29 +112,10 @@ public class Driver extends JPanel implements ListSelectionListener{
     	File file = new File("files.txt");
     	ArrayList<String> names = new ArrayList<String>();
     	
-    	if (file.createNewFile()){
-            System.out.println("File is created!");
-            
-            //Creates a new file based on files.txt directory with the /files.txt removed
-            File fl = new File(file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf(File.separator)));
-            File[] matchingFiles = fl.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                	//Accepts all .txt files except the files.txt file
-                    return !name.startsWith("files") && name.endsWith("txt");
-                }
-            });
-            
-            FileWriter writer = new FileWriter(file);
-            for(int k = 0; k < matchingFiles.length; k++) {
-            	writer.write(matchingFiles[k].getName() + "\n");
-            }
-            writer.close();
-            
-        }
-    	else {
-            System.out.println("File already exists.");
-        }
-
+    	file.createNewFile();
+    	
+    	refreshFiles();
+    	
     	Scanner scan = new Scanner(file);
     	
     	while(scan.hasNext()) {
@@ -114,6 +125,23 @@ public class Driver extends JPanel implements ListSelectionListener{
     	scan.close();
     	
     	return names.toArray(new String[names.size()]);
+    }
+    
+    public static void refreshFiles() throws IOException {
+    	File file = new File("files.txt");
+    	File fl = new File(file.getAbsolutePath().substring(0,file.getAbsolutePath().lastIndexOf(File.separator)));
+        File[] matchingFiles = fl.listFiles(new FilenameFilter() {
+            public boolean accept(File dir, String name) {
+            	//Accepts all .txt files except the files.txt file
+                return !name.startsWith("files") && name.endsWith("txt");
+            }
+        });
+        
+        FileWriter writer = new FileWriter(file);
+        for(int k = 0; k < matchingFiles.length; k++) {
+        	writer.write(matchingFiles[k].getName() + "\n");
+        }
+        writer.close();
     }
     
     private static void createAndShowGUI() throws IOException {
