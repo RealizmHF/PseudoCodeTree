@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -42,9 +43,19 @@ public class Driver extends JPanel implements ListSelectionListener{
 	private JButton delFile;
 	
 	private JButton refreshFile;
+	
+	private JTree filler;
+	
+	private static ArrayList<String> fileNames = new ArrayList<String>();
+	
+	public static String getFileNames(int index){
+		return fileNames.get(index);
+	}
 
     public Driver() throws IOException {
         super(new GridBagLayout());
+        
+        EventHandler event = new EventHandler(this);
         
         main = new JPanel(new GridBagLayout());
         
@@ -53,11 +64,13 @@ public class Driver extends JPanel implements ListSelectionListener{
         tabs = new JTabbedPane();
         
         newFile = new JButton("New File");
+        newFile.addActionListener(event);
         c.gridx = 0;
         c.gridy = 0;
         main.add(newFile, c);
         
         delFile = new JButton("Delete");
+        delFile.addActionListener(event);
         c.gridx = 0;
         c.gridy = 1;
         main.add(delFile, c);
@@ -67,7 +80,7 @@ public class Driver extends JPanel implements ListSelectionListener{
         c.gridy = 2;
         main.add(refreshFile, c);
         
-        JComponent panel1 = makeTabFile();
+        JComponent panel1 = makeTabFile(event);
         panel1.setPreferredSize(new Dimension(500, 200));
         tabs.addTab("File", panel1);
         tabs.setMnemonicAt(0, KeyEvent.VK_1);
@@ -80,13 +93,15 @@ public class Driver extends JPanel implements ListSelectionListener{
         add(main);
         add(tabs);
         
-         
+
         tabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
     }
 
-    protected JComponent makeTabFile() throws IOException {
+    protected JComponent makeTabFile(EventHandler event) throws IOException {
         tabFile = new JPanel(false);
-        JList<String> list = new JList<String>(createFiles());
+        refreshFiles();
+        JList<String> list = new JList<String>(fileNames.toArray(new String[fileNames.size()]));
+        list.addListSelectionListener(event);
         tabFile.setLayout(new GridLayout(1, 1));
         tabFile.add(list);
         return tabFile;
@@ -95,37 +110,27 @@ public class Driver extends JPanel implements ListSelectionListener{
     @Override
     public void valueChanged(ListSelectionEvent e) 
     { 
-        //set the text of the label to the selected value of lists
-          
+        //set the text of the label to the selected value of lists  
     }
     
     protected JComponent makeTabTree() {
         tabTree = new JPanel(false);
-        JTree filler = new JTree(new Object[0]);
+        filler = new JTree(new Object[0]);
         tabTree.setLayout(new GridLayout(1, 1));
         tabTree.add(filler);
         return tabTree;
     }
     
-    private String[] createFiles() throws IOException {
-    	//Reads all files created to display a list
+    private static void createFiles(String newFile) throws IOException {
+    	//Creates a new file
     	
-    	File file = new File("files.txt");
-    	ArrayList<String> names = new ArrayList<String>();
+    	File file = new File(newFile);
     	
     	file.createNewFile();
     	
     	refreshFiles();
     	
-    	Scanner scan = new Scanner(file);
     	
-    	while(scan.hasNext()) {
-    		names.add(scan.next());
-    	}
-    	
-    	scan.close();
-    	
-    	return names.toArray(new String[names.size()]);
     }
     
     public static void refreshFiles() throws IOException {
@@ -138,11 +143,10 @@ public class Driver extends JPanel implements ListSelectionListener{
             }
         });
         
-        FileWriter writer = new FileWriter(file);
+        
         for(int k = 0; k < matchingFiles.length; k++) {
-        	writer.write(matchingFiles[k].getName() + "\n");
-        }
-        writer.close();
+        	fileNames.add(matchingFiles[k].getName() + "\n");
+        }  
     }
     
     private static void createAndShowGUI() throws IOException {
