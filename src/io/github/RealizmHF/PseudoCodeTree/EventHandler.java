@@ -48,8 +48,6 @@ public class EventHandler implements ActionListener, ListSelectionListener {
 		case "Refresh": refreshPressed(e);
 		case "Add Node": addNodePressed(e);
 		case "Delete Node": deleteNodePressed(e);
-		case "Create": createPressed(e);
-		case "Cancel": cancelPressed(e);
 		case "Add": addPressed(e);
 		
 		}
@@ -155,16 +153,6 @@ public class EventHandler implements ActionListener, ListSelectionListener {
 	}
 
 	private void deleteNodePressed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void createPressed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void cancelPressed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
