@@ -3,13 +3,16 @@ package io.github.RealizmHF.PseudoCodeTree;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
@@ -35,7 +38,12 @@ public class EventHandler implements ActionListener, ListSelectionListener {
 		
 		switch(e.getActionCommand()) {
 		
-		case "New File": newFilePressed(e);
+		case "New File": try {
+				newFilePressed(e);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		case "Delete": deletePressed(e);
 		case "Refresh": refreshPressed(e);
 		case "Add Node": addNodePressed(e);
@@ -176,19 +184,22 @@ public class EventHandler implements ActionListener, ListSelectionListener {
 		
 	}
 	
-	public static void newFilePressed(ActionEvent e) {
+	public static void newFilePressed(ActionEvent e) throws IOException {
 		/*
 		 * newFile Button is pressed
 		 * Creates popup to display
 		 * popup will want the name of the file
-		 * A-Z && a-z && 0-9 && !-) allowed for characters
 		 * Has a Cancel button
 		 * Has a Create button
 		 */
 		
-		Object[] choices = {"Create", "Cancel"};
+		String popup = (String)JOptionPane.showInputDialog(main, "File Name: ", "Create File", JOptionPane.PLAIN_MESSAGE);
 		
-		//String popup = (String)JOptionPane.showInputDialog(null, "File Name: ", "Create File", JOptionPane.PLAIN_MESSAGE, popup, "ham");
+		if(popup != null) {
+			File file = new File(popup + ".txt");
+	    	
+	    	file.createNewFile();
+		}
 		
 	}
 	
