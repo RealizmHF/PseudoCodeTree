@@ -3,12 +3,18 @@ package io.github.RealizmHF.PseudoCodeTree;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Scanner;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 public class EventHandler implements ActionListener, ListSelectionListener {
 
@@ -43,7 +49,47 @@ public class EventHandler implements ActionListener, ListSelectionListener {
 		/*
 		 * Start reading from the file with the name of selected file
 		 */
-		System.out.println(main.getFileNames(e.getLastIndex()));
+		
+		//String file = main.getFileNames(e.getSource().toString());
+		
+		int temp = Integer.parseInt(e.toString().substring(474, 475));
+		
+		String file = main.getFileNames(temp);
+		
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(file.substring(file.length()-3, file.length()));
+
+		file = file.substring(0, file.length()-1);
+		Scanner filescan = null;
+		
+		try {
+			filescan = new Scanner(new FileReader(file));
+		} catch (FileNotFoundException e1) {
+			System.out.println("Failed to find " + file);
+		}
+		
+		DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode();
+		
+		
+	}
+	
+	private DefaultMutableTreeNode createNode(String name, String text) {
+		
+		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(text);
+		
+		newNode.setUserObject(text);
+		
+		return newNode;
+	}
+	
+
+	private Object[] resizeTree(Object[] tree) {
+		
+		Object[] temp = new Object[tree.length * 2];
+		
+		for(int k = 0; k < tree.length; k++) {
+			temp[k] = tree[k];
+		}
+		return temp;
 	}
 
 	private void addNodePressed(ActionEvent e) {

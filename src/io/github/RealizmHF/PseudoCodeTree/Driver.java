@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
  
-public class Driver extends JPanel implements ListSelectionListener{
+public class Driver extends JPanel {
 	
 	private JPanel main;
 	
@@ -44,11 +44,11 @@ public class Driver extends JPanel implements ListSelectionListener{
 	
 	private JButton refreshFile;
 	
-	private JTree filler;
+	private JTree tree;
 	
 	private static ArrayList<String> fileNames = new ArrayList<String>();
 	
-	public static String getFileNames(int index){
+	public String getFileNames(int index) {
 		return fileNames.get(index);
 	}
 
@@ -107,17 +107,19 @@ public class Driver extends JPanel implements ListSelectionListener{
         return tabFile;
     }
     
-    @Override
-    public void valueChanged(ListSelectionEvent e) 
-    { 
-        //set the text of the label to the selected value of lists  
-    }
-    
     protected JComponent makeTabTree() {
         tabTree = new JPanel(false);
-        filler = new JTree(new Object[0]);
+        tree = new JTree(new Object[0]);
         tabTree.setLayout(new GridLayout(1, 1));
-        tabTree.add(filler);
+        tabTree.add(tree);
+        return tabTree;
+    }
+    
+    protected JComponent makeTabTree(Object[] tree) {
+        tabTree = new JPanel(false);
+        this.tree = new JTree(tree);
+        tabTree.setLayout(new GridLayout(1, 1));
+        tabTree.add(this.tree);
         return tabTree;
     }
     
