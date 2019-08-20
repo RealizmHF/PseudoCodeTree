@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.swing.Icon;
@@ -14,11 +15,14 @@ import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 
 public class EventHandler implements ActionListener, ListSelectionListener {
 
 	private static Driver main;
+	
+	boolean ranAlready = false;
 	
 	public EventHandler(Driver main) {
 		this.main = main;
@@ -50,35 +54,80 @@ public class EventHandler implements ActionListener, ListSelectionListener {
 		 * Start reading from the file with the name of selected file
 		 */
 		
-		//String file = main.getFileNames(e.getSource().toString());
+		ranAlready = !ranAlready;
 		
-		int temp = Integer.parseInt(e.toString().substring(474, 475));
-		
-		String file = main.getFileNames(temp);
-		
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(file.substring(file.length()-3, file.length()));
+		if(ranAlready) {
+			//String file = main.getFileNames(e.getSource().toString());
+			System.out.println(e.toString().substring(474, 475));
+			int temp = Integer.parseInt(e.toString().substring(474, 475));
+			
+			String file = main.getFileNames(temp);
+			
+			DefaultMutableTreeNode root = new DefaultMutableTreeNode(file.substring(0, file.length()-5));
 
-		file = file.substring(0, file.length()-1);
-		Scanner filescan = null;
-		
-		try {
-			filescan = new Scanner(new FileReader(file));
-		} catch (FileNotFoundException e1) {
-			System.out.println("Failed to find " + file);
+			file = file.substring(0, file.length()-1);
+			
+			Scanner filescan = null;
+			
+			try {
+				filescan = new Scanner(new FileReader(file));
+			} catch (FileNotFoundException e1) {
+				System.out.println("Failed to find " + file);
+			}
+			
+			ArrayList<String> lines = new ArrayList<String>();
+			
+			while(filescan.hasNext()) {
+				lines.add(filescan.nextLine());
+			}
+			
+			main.setRoot(createNodes(root, lines));
+			main.revalidate();
 		}
-		
-		DefaultMutableTreeNode tempNode = new DefaultMutableTreeNode();
-		
-		
 	}
 	
-	private DefaultMutableTreeNode createNode(String name, String text) {
+	private DefaultMutableTreeNode createNodes(DefaultMutableTreeNode root, ArrayList<String> lines) {
+		/*
+		 * Takes in the root of the tree and a list of every line from the file
+		 * Outputs the completed tree
+		 * 
+		 * Must remember previous nodes in order to traverse and add nodes to correct parents
+		 * Must remove counter system from each line, ensuring that each line is entered under the correct node
+		 */
 		
-		DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(text);
+		DefaultMutableTreeNode previous = root;
+		int previousStar = -1;
+
+		for(int k = 0; k < lines.size(); k++) {
+			
+			int stars = lines.get(k).lastIndexOf("*");
+			
+			if(previousStar < stars) {
+				
+				previousStar = stars;
+				
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(lines.get(k).substring(stars + 1, lines.get(k).length()));
+				newNode.setParent(previous);
+				previous = newNode;
+				
+			}
+			else if(previousStar == stars) {
+				
+				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(lines.get(k).substring(stars + 1, lines.get(k).length()));
+				newNode.setParent((MutableTreeNode) previous.getParent());
+				previous = newNode;
+			}
+			else {
+				previousStar -= stars;
+				
+				for(int c = 0; c < previousStar; c++) {
+					previous = (DefaultMutableTreeNode) previous.getParent();
+				}
+				k--;
+			}
+		}
 		
-		newNode.setUserObject(text);
-		
-		return newNode;
+		return root;
 	}
 	
 

@@ -1,3 +1,5 @@
-test
-this
-out
+*test
+**this
+***out
+***in
+**not

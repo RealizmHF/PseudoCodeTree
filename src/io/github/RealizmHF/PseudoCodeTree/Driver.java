@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -33,6 +34,10 @@ public class Driver extends JPanel {
 	
 	private JPanel main;
 	
+	private JComponent panel1;
+	
+	private JComponent panel2;
+	
 	private JTabbedPane tabs;
 	
 	private JPanel tabFile;
@@ -45,6 +50,8 @@ public class Driver extends JPanel {
 	private JButton refreshFile;
 	
 	private JTree tree;
+	
+	private static DefaultMutableTreeNode root;
 	
 	private static ArrayList<String> fileNames = new ArrayList<String>();
 	
@@ -80,13 +87,13 @@ public class Driver extends JPanel {
         c.gridy = 2;
         main.add(refreshFile, c);
         
-        JComponent panel1 = makeTabFile(event);
+        panel1 = makeTabFile(event);
         panel1.setPreferredSize(new Dimension(500, 200));
         tabs.addTab("File", panel1);
         tabs.setMnemonicAt(0, KeyEvent.VK_1);
         
         
-        JComponent panel2 = makeTabTree();
+        panel2 = makeTabTree(root);
         tabs.addTab("Tree", panel2);
         tabs.setMnemonicAt(1, KeyEvent.VK_2);
 
@@ -106,18 +113,16 @@ public class Driver extends JPanel {
         tabFile.add(list);
         return tabFile;
     }
+ 
     
-    protected JComponent makeTabTree() {
-        tabTree = new JPanel(false);
-        tree = new JTree(new Object[0]);
-        tabTree.setLayout(new GridLayout(1, 1));
-        tabTree.add(tree);
-        return tabTree;
+    protected void setRoot(DefaultMutableTreeNode r) {
+    	root = r;
+    	
     }
     
-    protected JComponent makeTabTree(Object[] tree) {
+    protected JComponent makeTabTree(DefaultMutableTreeNode root) {
         tabTree = new JPanel(false);
-        this.tree = new JTree(tree);
+        this.tree = new JTree(root);
         tabTree.setLayout(new GridLayout(1, 1));
         tabTree.add(this.tree);
         return tabTree;
